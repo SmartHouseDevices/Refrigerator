@@ -5,8 +5,9 @@ import datetime
 now = datetime.datetime.now()
 #GPIO.setmode(GPIO.BCM)
 
-db = MySQLdb.connect("localhost","root","pass","Refrigerator" )
+db = MySQLdb.connect("localhost","user","pass","Refrigerator" )
 cursor = db.cursor()
+table = "products"
 while 1:
 #GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
@@ -22,10 +23,10 @@ while 1:
 
 
 
-	query = "SELECT * from Items WHERE barcode = '%s'" % (code)
+	query = "SELECT * from %s WHERE barcode = '%s'" % (table, code)
 	rows=cursor.execute(query)
 	if rows>0:
-		query = "SELECT quantity from Items WHERE barcode = '%s'" % (code)
+		query = "SELECT quantity from %s WHERE barcode = '%s'" % (table, code)
 		cursor.execute(query)
 		quantity = int(cursor.fetchone()[0])
 	else:
@@ -57,22 +58,22 @@ while 1:
 	    answer=raw_input('Something went wrong. Would you like to add or to remove item?')
 	if answer=='add_new':                                                                   #if (GPIO.input(23)==1):
 		date = now.strftime('%Y-%m-%d %H:%M:%S')
-		query = "INSERT INTO Items(barcode, \
+		query = "INSERT INTO %s(barcode, \
 		       name, quantity, insert_date) \
 		       VALUES ('%d', '%s', '%d', '%s')" % \
-		       (code, desc, 1, date)
+		       (table, code, desc, 1, date)
 		cursor.execute(query)
 		print('Added')
 	elif answer=='add':
 		date = now.strftime('%Y-%m-%d %H:%M:%S')
 		newquantity = quantity + 1
-		query = "UPDATE Items SET quantity = '%d', insert_date = '%s' WHERE barcode = '%d'" % (newquantity, date, code)
+		query = "UPDATE %s SET quantity = '%d', insert_date = '%s' WHERE barcode = '%d'" % (table, newquantity, date, code)
 		cursor.execute(query)
 		print('Added')
 		print newquantity
 	elif answer=='remove':                                                              #elif (GPIO.input(24)==0):
 		newquantity = quantity - 1
-		query = "UPDATE Items SET quantity = '%d' WHERE barcode = '%d'" % (newquantity, code)
+		query = "UPDATE %s SET quantity = '%d' WHERE barcode = '%d'" % (table, newquantity, code)
 		cursor.execute(query)
 		print('Removed')
 
