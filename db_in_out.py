@@ -5,8 +5,10 @@ import datetime
 now = datetime.datetime.now()
 #GPIO.setmode(GPIO.BCM)
 
-db = MySQLdb.connect("localhost","user","pass","Refrigerator" )
+db = MySQLdb.connect("localhost","user","pass","productdb" )
 cursor = db.cursor()
+user = 0
+#user id for mysql fi scanned or updated with scanenr
 table = "products"
 while 1:
 #GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
@@ -37,6 +39,8 @@ while 1:
 
 	if rows==0:
 		#den ine katoxiromeno sti vasi	
+		title=raw_input('Title: ')
+		answer='add_new'
 		desc=raw_input('Description: ')
 		answer='add_new'
 		print "Add new"
@@ -59,9 +63,9 @@ while 1:
 	if answer=='add_new':                                                                   #if (GPIO.input(23)==1):
 		date = now.strftime('%Y-%m-%d %H:%M:%S')
 		query = "INSERT INTO %s(barcode, \
-		       name, quantity, insert_date) \
-		       VALUES ('%d', '%s', '%d', '%s')" % \
-		       (table, code, desc, 1, date)
+		       title, quantity, insert_date, user) \
+		       VALUES ('%d', '%s', '%d', '%s', '%s')" % \
+		       (table, code, title, 1, date, user)
 		cursor.execute(query)
 		print('Added')
 	elif answer=='add':
