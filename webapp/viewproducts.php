@@ -5,7 +5,7 @@ require_once("db/conn.php");
 $sql = "
 SELECT id, barcode, title, image, description, category, country, quantity, unit, user, insert_date
 FROM products
-WHERE 1;";
+WHERE quantity > 0;";
 $result = mysqli_query($conn, $sql);
  $title= "View product";
  require_once("page.php");
